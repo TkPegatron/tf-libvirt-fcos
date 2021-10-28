@@ -1,0 +1,56 @@
+variant: fcos
+version: 1.4.0
+passwd:
+  users:
+    - name: ansible
+      gecos: Ansible automation controller
+      groups:
+        - sudo
+      password_hash: $y$j9T$pZVRpF7OZoXlEq2abx/wK.$SbXgAcF2JxGaRvtN9OldSPnV54QeVVFTPclimwAR/22
+storage:
+  files:
+    - path: /etc/hostname
+      mode: 0644
+      contents:
+        inline: |
+          ${hostname}
+    - path: /etc/hosts
+      mode: 0644
+      contents:
+        append: |
+          # Map local ip to fqdn
+          127.0.0.1 ${hostname}
+          ::1       ${hostname}
+    - path: /etc/sysctl.d/silence-audit.conf
+      mode: 0644
+      contents:
+        inline: |
+          # Raise console message logging level from DEBUG (7) to WARNING (4)
+          # to hide audit messages from the interactive console
+          kernel.printk=4
+  links:
+    - path: /etc/localtime
+      target: /usr/share/zoneinfo/America/Detroit
+      mode: 0644
+systemd:
+  units:
+  - name: ignition-software-installer.service
+    enabled: true
+    contents: |
+      [Unit]
+      After=network-online.target
+      Wants=network-online.target
+      OnFailure=emergency.target
+      OnFailureJobMode=replace-irriversibly
+      ConditionPathExists=!/var/lib/ign-software-installed
+      [Service]
+      RemainAfterExit=yes
+      Type=oneshot
+      ExecStart=/usr/bin/rpm-ostree install \
+          python3 \
+          --idempotent --apply-live
+      ExecStartPost=/usr/bin/touch /var/lib/ign-software-installed
+      StandardOutput=kmsg+console
+      StandardError=kmsg+console
+      [Install]
+      WantedBy=multi-user.target
