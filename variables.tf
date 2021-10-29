@@ -1,17 +1,6 @@
-#======================================================================================
-# General configuration
-#======================================================================================
-
-variable "action" {
-  type        = string
-  description = "Which action has to be done on the cluster (create, upgrade, add_worker, or remove_worker)"
-  default     = "create"
-
-  validation {
-    condition     = contains(["create", "upgrade", "add_worker", "remove_worker"], var.action)
-    error_message = "Variable 'action' is invalid.\nDefault value is \"create\".\nPossible values are: [\"create\", \"upgrade\", \"add_worker\", \"remove_worker\"]."
-  }
-}
+#=======================================#
+#---[ General configuration ]-----------#
+#=======================================#
 
 variable "libvirt_provider_uri" {
   type        = string
@@ -30,24 +19,9 @@ variable "libvirt_resource_pool_location" {
   default     = "/var/lib/libvirt/pools/"
 }
 
-#======================================================================================
-# Global VM configuration
-#======================================================================================
-
-variable "fcos_version" {
-  type = string
-  description = "FCOS image version"
-}
-
-variable "vm_tld" {
-  type = string
-  default = "example.com"
-  description = "Top level domain name to assign to the host"
-}
-
-#======================================================================================
-# Network configuration
-#======================================================================================
+#=======================================#
+#---[ Network configuration ]-----------#
+#=======================================#
 
 variable "network_name" {
   type        = string
@@ -77,9 +51,20 @@ variable "network_cidr" {
   description = "Network CIDR"
 }
 
-#======================================================================================
-# Node parameters
-#======================================================================================
+variable "network_zone" {
+  type = string
+  default = "terraform.lan"
+  description = "DNS Zone name to assign to the host"
+}
+
+#=======================================#
+#---[ VM parameters ]-------------------#
+#=======================================#
+
+variable "fcos_version" {
+  type = string
+  description = "The version of CoreOS to run"
+}
 
 variable "default_cpu" {
   type        = number

@@ -63,7 +63,7 @@ module "coreos_module" {
       : "${path.module}/butane/fcos-generic.yaml"
     ),
     { # Template_file variables
-      hostname = "${each.value.name}.${var.vm_tld}"
+      hostname = "${each.value.name}.${var.network_zone}"
     }
   )
 
