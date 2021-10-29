@@ -114,7 +114,7 @@ variable "coreos_nodes" {
     condition = (
       compact(tolist([for node in var.coreos_nodes : node.name])) == distinct(compact(tolist([for node in var.coreos_nodes : node.name])))
       && compact(tolist([for node in var.coreos_nodes : node.mac if can(node.mac)])) == distinct(compact(tolist([for node in var.coreos_nodes : node.mac if can(node.mac)])))
-      && compact(tolist([for node in var.coreos_nodes : node.ip])) == distinct(compact(tolist([for node in var.coreos_nodes : node.ip])))
+      && compact(tolist([for node in var.coreos_nodes : node.ip if can(node.ip)])) == distinct(compact(tolist([for node in var.coreos_nodes : node.ip if can(node.ip)])))
     )
     error_message = "Node configuration is incorrect. Make sure that: \n - every ID is unique,\n - every MAC and IP address is unique or null."
   }
