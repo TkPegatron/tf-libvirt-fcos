@@ -16,8 +16,6 @@ libvirt_resource_pool_location = "/var/lib/libvirt/pools/"
 # Global VM configuration
 #======================================================================================
 
-# Source of linux image. It can be path to an image on host's filesystem or an URL #
-#vm_image_source = "https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/34.20211004.3.1/x86_64/fedora-coreos-34.20211004.3.1-qemu.x86_64.qcow2.xz"
 fcos_version = "34.20211004.3.1"
 
 
@@ -27,6 +25,8 @@ fcos_version = "34.20211004.3.1"
 
 # Network name #
 network_name = "k8s-network"
+
+# Network FQDN #
 
 # Network mode (nat, route) #
 network_mode = "nat"
@@ -55,16 +55,17 @@ coreos_nodes = [
   {
     name  = "x86-server-a"
     ip  = "192.168.113.10"
-    mac = "52:54:00:00:00:10"
   },
   {
-    name  = "x86-node-0"
+    name  = "x86-worker-0"
     ip  = "192.168.113.11"
-    mac = "52:54:00:00:00:11"
   },
   {
-    name  = "x86-node-1"
+    name  = "x86-worker-1"
     ip  = "192.168.113.12"
-    mac = "52:54:00:00:00:12"
+  },
+  {
+    name  = "x86-worker-2"
+    ip  = "192.168.113.13"
   }
 ]

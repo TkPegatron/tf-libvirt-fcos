@@ -1,16 +1,16 @@
 # -[Resources]-------------------------------------------------------------
 data "ct_config" "vm_ignition" {
-  content  = var.vm_ignition
+  content  = var.vm_butane
 }
 resource "libvirt_ignition" "ignition" {
-  name     = "${var.vm_name}.ignition.ign"
+  name     = "${var.vm_name}.ign"
   pool     = var.resource_pool_name
   content  = data.ct_config.vm_ignition.rendered
 }
 
 # -[Create Volume]--------------------
 resource "libvirt_volume" "vm_volume" {
-  name           = "${var.vm_name}.ign-${md5(data.ct_config.vm_ignition.id)}.qcow2"
+  name           = "${var.vm_name}.ign-${md5(libvirt_ignition.ignition.id)}.qcow2"
   pool           = var.resource_pool_name
   base_volume_id = var.base_volume_id
   size           = var.vm_storage

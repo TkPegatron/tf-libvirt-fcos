@@ -24,24 +24,13 @@ resource "null_resource" "download_extract_coreos_image" {
 }
 #-[Create base OS image for nodes]-#
 resource "libvirt_volume" "base_volume" {
-  name       = "base_volume"
+  name       = "fcos-baseimage-${var.fcos_version}.x86_64.qcow2"
   pool       = var.libvirt_resource_pool_name
   source     = pathexpand("${path.module}/.terraform/image_cache/fedora-coreos-${var.fcos_version}-qemu.x86_64.qcow2")
   depends_on = [
     libvirt_pool.resource_pool,
     null_resource.download_extract_coreos_image
   ]
-}
-# -[Template Ignition]--------------------------------------------------------------
-data "template_file" "ignition" {
-  for_each = { for node in var.coreos_nodes : node.name => node }
-  template = try(
-    file("${path.module}/ignition/${each.value.name}.ign.yaml"),
-    file("${path.module}/ignition/fcos-generic.ign.yaml")
-  )
-  vars = {
-    hostname = "${each.value.name}.${var.vm_tld}"
-  }
 }
 
 # -[Modules]--------------------------------------------------------------
@@ -64,8 +53,19 @@ module "coreos_module" {
   libvirt_provider_uri = var.libvirt_provider_uri
   resource_pool_name   = libvirt_pool.resource_pool.name
   base_volume_id       = libvirt_volume.base_volume.id
-  vm_ignition          = data.template_file.ignition[each.key].rendered
   network_id           = module.network_module.network_id
+
+  #-[Butane Template for Poseidon]-#
+  vm_butane = templatefile(
+    (
+      fileexists("${path.module}/butane/${each.value.name}.yaml")
+      ? "${path.module}/butane/${each.value.name}.yaml"
+      : "${path.module}/butane/fcos-generic.yaml"
+    ),
+    { # Template_file variables
+      hostname = "${each.value.name}.${var.vm_tld}"
+    }
+  )
 
   #-[Master node specific variables]-#
   vm_name            = each.value.name
@@ -82,4 +82,11 @@ module "coreos_module" {
     libvirt_pool.resource_pool,
     libvirt_volume.base_volume
   ]
+}
+
+output "vm_info" {
+  value = {
+    for node in var.coreos_nodes :
+    "${node.name}" => module.coreos_module[node.name].vm_info
+  }
 }

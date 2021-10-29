@@ -12,20 +12,18 @@ variable "resource_pool_name" {
 
 variable "base_volume_id" {
   type        = string
-  description = "Base image voulme ID"
+  description = "Base image volume ID"
 }
 
-variable "vm_ignition" {
+variable "vm_butane" {
   type        = string
-  description = "FCOS Ignition"
+  description = "FCOS Butane content, will be converted to ignition format"
 }
 
 variable "network_id" {
   type        = string
   description = "Id of the network in which VM resides"
 }
-
-
 
 variable "vm_name" {
   type        = string
@@ -69,7 +67,7 @@ variable "vm_ip" {
       var.vm_ip == null
       || can(regex("^([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(.([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])){3}$", var.vm_ip))
     )
-    error_message = "Invalid IP address provided to VM.\nPlease check the following variables:\n - 'lb_nodes',\n - 'master_nodes',\n - 'worker_nodes'.\n\nNote that setting IP to 'null' causes random valid IP to be generated."
+    error_message = "Invalid IP address provided to VM.\nPlease check the following variables:\n - 'coreos_nodes'.\n\nNote that setting IP to 'null' causes random valid IP to be generated."
   }
 }
 

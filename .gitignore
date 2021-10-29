@@ -2,5 +2,5 @@ terraform.tfstate
 terraform.tfstate.backup
 .terraform/***
 .terraform.lock.hcl
-!ignition/fcos-generic.ign.yaml
-ignition/***
+butane/***
+!butane/fcos-generic.yaml

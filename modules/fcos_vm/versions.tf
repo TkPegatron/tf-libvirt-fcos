@@ -1,5 +1,5 @@
 terraform {
-  required_version = ">= 1.0.0"
+  required_version = "1.0.10"
   required_providers {
     libvirt = {
       source  = "dmacvicar/libvirt"
@@ -7,7 +7,7 @@ terraform {
     }
     ct = {
       source = "poseidon/ct"
-      version = "~> 0.9.1"
+      version = "0.9.1"
     }
   }
 }

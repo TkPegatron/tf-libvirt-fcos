@@ -2,6 +2,8 @@ variant: fcos
 version: 1.4.0
 passwd:
   users:
+    - name: root
+      password_hash: $y$j9T$pZVRpF7OZoXlEq2abx/wK.$SbXgAcF2JxGaRvtN9OldSPnV54QeVVFTPclimwAR/22
     - name: ansible
       gecos: Ansible automation controller
       groups:
@@ -42,14 +44,15 @@ systemd:
       Wants=network-online.target
       OnFailure=emergency.target
       OnFailureJobMode=replace-irriversibly
-      ConditionPathExists=!/var/lib/ign-software-installed
+      Before=zincati.service
+      ConditionPathExists=!/var/lib/%N.stamp
       [Service]
       RemainAfterExit=yes
       Type=oneshot
       ExecStart=/usr/bin/rpm-ostree install \
           python3 \
           --idempotent --apply-live
-      ExecStartPost=/usr/bin/touch /var/lib/ign-software-installed
+      ExecStartPost=/usr/bin/touch /var/lib/%N.stamp
       StandardOutput=kmsg+console
       StandardError=kmsg+console
       [Install]
